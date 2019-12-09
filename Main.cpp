@@ -33,7 +33,7 @@ int main() {
 	inFile >> inPay; //First, it loads the pay
 	inFile >> inSpend; //Second, it loads the spending
 	inFile >> inSave; //Third, it loads the saving
-	//no shit, retard
+	//no shit
 	do {
 		cout << "**************" << endl;
 		cout << "* START MENU *" << endl;

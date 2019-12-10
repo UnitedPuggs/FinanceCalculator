@@ -9,7 +9,7 @@
 using namespace std;
 /*
 	Author : Eddie Poulson
-	Vers : 0.50.0 (Full, fix, binary[small fix])
+	Vers : 0.55.1 (Full, fix, binary[small fix])
 	Date : 12/9/19
 	Desc : The finance calculator really only serves the purpose of holding the saving and spending
 	percents you want and your yearly paychecks.
@@ -150,8 +150,8 @@ int main() {
 			if (addnum == ADDCURRENT) {
 				cout << "~* Enter your paycheck: ";
 				cin >> filePay;
-				fileSpend = spendPercent(filePay, inSpendPercent);
-				fileSave = savePercent(filePay, inSavePercent);
+				fileSpend += spendPercent(filePay, inSpendPercent);
+				fileSave += savePercent(filePay, inSavePercent);
 			}
 
 			else if (addnum == ADDEXISTING) {
@@ -275,29 +275,24 @@ int main() {
 	10 - Add saving cash money - Implemented!
 	*/
 	while (head != NULL) {
-		if (head->inp == 6) {
+		if (head->inp == 6 && head->next->inp != 44) {
 			inPay += filePay;
-			inSpend += fileSpend;
-			inSave += fileSave;
 		}
-		if (head->inp == 9) {
+		if (head->inp == 9 && head->next->inp != 44) {
 			inSpend += fileSpend;
 		}
-		if (head->inp == 10) {
+		if (head->inp == 10 && head->next->inp != 44) {
 			inSave += fileSave;
-		}
-		if (head->inp == 12) {
-			inPay;
-		}
-		if (head->inp == 13) {
-			inSave;
 		}
 		head = head->next;
 	}
 	delete ptr, head;
 	outFile << fixed << setprecision(2) << "Paycheck(s): " << inPay << endl;
+	cout << "inp " << inPay << endl;
 	outFile << fixed << setprecision(2) << "Spending: " << inSpend << endl;
+	cout << "spe " << inSpend << endl;
 	outFile << fixed << setprecision(2) << "Saving: " << inSave << endl; 
+	cout << "sav " << inSave << endl;
 	outFile << fixed << setprecision(2) << inSpendPercent << endl;
 	outFile << fixed << setprecision(2) << inSavePercent << endl;
 	for (int i = 0; i < paychecks.size(); i++) {

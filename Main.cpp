@@ -9,12 +9,12 @@
 using namespace std;
 /*
 	Author : Eddie Poulson
-	Vers : 0.21.0 (Full, fix, binary[small fix])
+	Vers : 0.50.0 (Full, fix, binary[small fix])
 	Date : 12/9/19
 	Desc : The finance calculator really only serves the purpose of holding the saving and spending
 	percents you want and your yearly paychecks.
-	What's new : Implemented actual functions to the menu options.
-	TODO : Implemented that whole adjust option
+	What's new : All menu options implemented!
+	TODO : UI and Android App Port
 */
 inputList* head = NULL;
 inputList* ptr = new inputList;
@@ -25,10 +25,11 @@ int main() {
 	vector<double> paychecks; //This will actually hold the paycheck values
 	string input, throwaway; //Just used for start menu input and throwaway is to eat the strings when taking input
 	int numPut; //Used for number input, obviously
-	bool running = false;
-	char key = ' ';
+	bool running = false; 
+	char key = ' '; 
 	//The in versions are what are ripped from the input file
-	double filePay = 0, inPay, fileSpend = 0, inSpend, fileSave = 0, inSave, filePaychecks;
+	double filePay = 0, inPay, fileSpend = 0, inSpend, fileSave = 0, inSave, fileSpendPercent = 0, inSpendPercent, fileSavePercent = 0,
+		inSavePercent, filePaychecks;
 	ifstream inFile, paycheckFile;
 
 	inFile.open("money.txt");
@@ -38,6 +39,10 @@ int main() {
 	inFile >> throwaway >> inSpend; //Second, it loads the spending
 
 	inFile >> throwaway >> inSave; //Third, it loads the saving
+
+	inFile >> inSpendPercent;
+
+	inFile  >> inSavePercent;
 
 	while (paycheckFile >> filePaychecks) {
 		paychecks.push_back(filePaychecks); //Finally, you load all the paychecks
@@ -69,13 +74,14 @@ int main() {
 		key = _getch();
 		system("CLS");
 		do {
-			cout << "**********************" << endl;
-			cout << "*     APP   MENU     *" << endl;
-			cout << "*1- View Finances  -1*" << endl;
-			cout << "*2-  Add Paycheck  -2*" << endl;
-			cout << "*3- Adjust Amounts -3*" << endl;
-			cout << "*0-      Quit      -0*" << endl;
-			cout << "**********************" << endl;
+			cout << "***************************" << endl;
+			cout << "*        APP  MENU        *" << endl;
+			cout << "*1-    View Finances    -1*" << endl;
+			cout << "*2-     Add Paycheck    -2*" << endl;
+			cout << "*3-    Adjust Amounts   -3*" << endl;
+			cout << "*0-         Quit        -0*" << endl;
+			cout << "*Enter 44 to return to main*" << endl;
+			cout << "****************************" << endl;
 			key = ' ';
 			cin >> numPut;
 			if (numPut != EXIT && numPut != VIEW && numPut != ADD && numPut != ADJUST) {
@@ -97,16 +103,13 @@ int main() {
 				cout << "**********************" << endl;
 				key = ' ';
 				cin >> viewnum;
-				if (viewnum != VIEWALL && viewnum != VIEWPAY) {
+				if (viewnum != VIEWALL && viewnum != VIEWPAY && viewnum != 44) {
 					cout << "Please enter a valid input! Press any key to continue. . ." << endl;
 					key = _getch();
 					system("CLS");
 				}
-			} while (viewnum != VIEWALL && viewnum != VIEWPAY);
+			} while (viewnum != VIEWALL && viewnum != VIEWPAY && viewnum != 44);
 			if (viewnum == VIEWALL) {
-				inFile >> inPay;
-				inFile >> inSpend;
-				inFile >> inSave;
 				cout << "Last Paycheck: $" << inPay << endl;
 				cout << "Spending: $" << inSpend + fileSpend << endl;
 				cout << "Saving: $" << inSave + fileSave << endl;
@@ -116,6 +119,9 @@ int main() {
 					paycheckFile >> paychecks[i];
 					cout << "Week " << i + 1 << ": " << paychecks[i] << endl;
 				}
+			}
+			else if (viewnum == 44) {
+				continue;
 			}
 		}
 		if (numPut == ADD) {
@@ -129,12 +135,12 @@ int main() {
 				cout << "*************************" << endl;
 				key = ' ';
 				cin >> addnum;
-				if (addnum != ADDCURRENT && addnum != ADDEXISTING) {
+				if (addnum != ADDCURRENT && addnum != ADDEXISTING && addnum != 44) {
 					cout << "Please enter a valid input! Press any key to continue. . ." << endl;
 					key = _getch();
 					system("CLS");
 				}
-			} while (addnum != ADDCURRENT && addnum != ADDEXISTING);
+			} while (addnum != ADDCURRENT && addnum != ADDEXISTING && addnum != 44);
 
 			ptr->inp = addnum;
 			ptr->next = head;
@@ -144,8 +150,8 @@ int main() {
 			if (addnum == ADDCURRENT) {
 				cout << "~* Enter your paycheck: ";
 				cin >> filePay;
-				fileSpend = spendPercent(filePay, 70);
-				fileSave = savePercent(filePay, 30);
+				fileSpend = spendPercent(filePay, inSpendPercent);
+				fileSave = savePercent(filePay, inSavePercent);
 			}
 
 			else if (addnum == ADDEXISTING) {
@@ -161,12 +167,12 @@ int main() {
 					cout << "*********************" << endl;
 					key = ' ';
 					cin >> existnum;
-					if (existnum != ADDPAY && existnum != ADDSPEND && existnum != ADDSAVE) {
+					if (existnum != ADDPAY && existnum != ADDSPEND && existnum != ADDSAVE && existnum != 44) {
 						cout << "Please enter a valid input! Press any key to continue. . ." << endl;
 						key = _getch();
 						system("CLS");
 					}
-				} while (existnum != ADDPAY && existnum != ADDSPEND && existnum != ADDSAVE);
+				} while (existnum != ADDPAY && existnum != ADDSPEND && existnum != ADDSAVE && existnum != 44);
 
 				ptr->inp = existnum;
 				ptr->next = head;
@@ -198,16 +204,64 @@ int main() {
 					cin >> tempsavenum;
 					fileSave += tempsavenum;
 				}
+
+				if (existnum == 44) {
+					continue;
+				}
+			}
+			else if (addnum == 44) {
+				continue;
 			}
 		}
 		if (numPut == ADJUST) {
-
+			/*
+			* - Adjust Percentages
+			* - Adjust Spendings
+			* - Adjust Savings
+			*/
+			int adjustnum;
+			do {
+				cout << "**************************" << endl;
+				cout << "*11-  Adjust Percents -11*" << endl;
+				cout << "*12-  Adjust Spending -12*" << endl;
+				cout << "*13-  Adjust Saving   -13*" << endl;
+				cout << "**************************" << endl;
+				key = ' ';
+				cin >> adjustnum;
+				if (adjustnum != ADJUSTPERCENT && adjustnum != ADJUSTSPENDING && adjustnum != ADJUSTSAVING&& adjustnum != 44) {
+					cout << "Please enter a valid input! Press any key to continue. . ." << endl;
+					key = _getch();
+					system("CLS");
+				}
+			} while (adjustnum != ADJUSTPERCENT && adjustnum != ADJUSTSPENDING && adjustnum != ADJUSTSAVING && adjustnum != 44);
+			if (adjustnum == ADJUSTPERCENT) {
+				cout << "Current Spending Percent: " << inSpendPercent << endl;
+				cout << "Current Saving Percent: " << inSavePercent << endl;
+				do {
+					cout << "~* Enter your spending percent: ";
+					cin >> inSpendPercent;
+					if (inSpendPercent > 100) {
+						cout << "Please enter a number between 0-100!" << endl;
+					}
+				} while (inSpendPercent > 100);
+				inSavePercent = 100 - inSpendPercent;
+				cout << "Your save percent is now " << inSavePercent << endl;
+			}
+			else if (adjustnum == ADJUSTSPENDING) {
+				cout << "~* Enter your new spending amount: ";
+				cin >> inSpend;
+				inSpend -= fileSpend;
+			}
+			else if (adjustnum == ADJUSTSAVING) {
+				cout << "~* Enter your new saving amount: ";
+				cin >> inSave;
+				inSave -= fileSave;
+			}
+			else if (adjustnum == 44) {
+				continue;
+			}
 		}
 	} //end of running while loop
-
-	inFile >> inPay;
-	inFile >> inSpend;
-	inFile >> inSave;
 
 	inFile.close();
 	paycheckFile.close();
@@ -232,11 +286,20 @@ int main() {
 		if (head->inp == 10) {
 			inSave += fileSave;
 		}
+		if (head->inp == 12) {
+			inPay;
+		}
+		if (head->inp == 13) {
+			inSave;
+		}
 		head = head->next;
 	}
+	delete ptr, head;
 	outFile << fixed << setprecision(2) << "Paycheck(s): " << inPay << endl;
 	outFile << fixed << setprecision(2) << "Spending: " << inSpend << endl;
-	outFile << fixed << setprecision(2) << "Saving: " << inSave << endl;
+	outFile << fixed << setprecision(2) << "Saving: " << inSave << endl; 
+	outFile << fixed << setprecision(2) << inSpendPercent << endl;
+	outFile << fixed << setprecision(2) << inSavePercent << endl;
 	for (int i = 0; i < paychecks.size(); i++) {
 		paycheckOut << paychecks[i] << endl;
 	}
